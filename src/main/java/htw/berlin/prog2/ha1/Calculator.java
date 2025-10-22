@@ -25,7 +25,8 @@ public class Calculator {
      * Empfängt den Wert einer gedrückten Zifferntaste. Da man nur eine Taste auf einmal
      * drücken kann muss der Wert positiv und einstellig sein und zwischen 0 und 9 liegen.
      * Führt in jedem Fall dazu, dass die gerade gedrückte Ziffer auf dem Bildschirm angezeigt
-     * oder rechts an die zuvor gedrückte Ziffer angehängt angezeigt wird.
+     * wird. Der Bildschirm wird nach Eingabe einer neuen Zahl nach einem = zurückgesetzt.
+     * Die neu eingegebene Zahl wird NICHT rangehangen
      * @param digit Die Ziffer, deren Taste gedrückt wurde
      */
     public void pressDigitKey(int digit) {
@@ -33,7 +34,14 @@ public class Calculator {
 
         if(screen.equals("0") || latestValue == Double.parseDouble(screen)) screen = "";
 
+        String cleanScreen = screen.replace("." , "").replace("-", "");
+
+        if (cleanScreen.length() >= 9)
+            return;
+
         screen = screen + digit;
+
+
     }
 
     /**
@@ -118,15 +126,25 @@ public class Calculator {
      * und das Ergebnis direkt angezeigt.
      */
     public void pressEqualsKey() {
-        var result = switch(latestOperation) {
-            case "+" -> latestValue + Double.parseDouble(screen);
-            case "-" -> latestValue - Double.parseDouble(screen);
-            case "x" -> latestValue * Double.parseDouble(screen);
-            case "/" -> latestValue / Double.parseDouble(screen);
+        double currentValue = Double.parseDouble(screen);
+        double result;
+
+        //wenn latestOperation leer ist, dann nichts tun
+        if(latestOperation.equals(""))
+            return;
+
+        result = switch(latestOperation) {
+            case "+" -> latestValue + currentValue;
+            case "-" -> latestValue - currentValue;
+            case "x" -> latestValue * currentValue;
+            case "/" -> currentValue == 0 ? Double.POSITIVE_INFINITY : latestValue / currentValue;
             default -> throw new IllegalArgumentException();
         };
         screen = Double.toString(result);
-        if(screen.equals("Infinity")) screen = "Error";
+
+        latestValue = result;
+
+        if(screen.equals("Infinity") || screen.equals("NaN")) screen = "Error";
         if(screen.endsWith(".0")) screen = screen.substring(0,screen.length()-2);
         if(screen.contains(".") && screen.length() > 11) screen = screen.substring(0, 10);
     }

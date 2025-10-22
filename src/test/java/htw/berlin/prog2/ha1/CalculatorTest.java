@@ -90,7 +90,6 @@ class CalculatorTest {
 
 
     //TODO hier weitere Tests erstellen
-    //TODO hier weitere Tests erstellen
     @Test
     @DisplayName("should display result after subtracting two numbers")
     void testSubtraction(){
@@ -148,5 +147,57 @@ class CalculatorTest {
         assertEquals(expected, actual);
 
     }
+
+    //
+    @Test
+    @DisplayName("should display new number and not add to existing")
+    void newNumber(){
+
+        Calculator calc = new Calculator();
+
+        calc.pressDigitKey(2);
+        calc.pressBinaryOperationKey("+");
+        calc.pressDigitKey(2);
+        calc.pressEqualsKey();
+
+        //sollte resetten
+        calc.pressDigitKey(3);
+
+        String expected = "3";
+        String actual = calc.readScreen();
+
+        assertEquals(expected, actual);
+
+    }
+
+
+
+
+    @Test
+    @DisplayName("should display maximum 9 numbers on screen")
+    void maxNeunZiffern(){
+
+        Calculator calc = new Calculator();
+
+        calc.pressDigitKey(2);
+        calc.pressDigitKey(2);
+        calc.pressDigitKey(2);
+        calc.pressDigitKey(2);
+        calc.pressDigitKey(2);
+        calc.pressDigitKey(2);
+        calc.pressDigitKey(2);
+        calc.pressDigitKey(2);
+        calc.pressDigitKey(2);
+        calc.pressDigitKey(2);
+
+        //sollte nur 9 mal 2 anzeigen
+
+        String expected = "222222222";
+        String actual = calc.readScreen();
+
+        assertEquals(expected, actual);
+
+    }
+
 }
 
